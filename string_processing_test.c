@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 
 void main()
@@ -7,4 +8,4 @@ void main()
 	scanf("%s", text); // alternatively &text[0]
 
 }
-
+*/
