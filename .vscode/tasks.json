@@ -6,7 +6,7 @@
       "type": "shell",
       "command": "gcc",
       "args": [
-        "string_processing_test.c"
+        "Cooper_Brown_Assignment1.c"
       ],
       "group": {
         "kind": "build",
