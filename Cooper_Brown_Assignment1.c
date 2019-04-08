@@ -4,19 +4,120 @@
 // This function 
 int inbuiltCommandSelector();
 
+int cliCommandSelector(int argc, char *argv[]);
+
+char encodeRotationWithKey();
+//void decodeRotationWithKey();
+
+char ceasarKeyFromFile();
+
+char caesarKeyFromFile()
+{
+    // it is specified that the key will be between -26 and 26. 27 is outside this range,
+    // so key is invalid by default. Key only becomes valid if a valid key is entered
+    char key = 27;
+    FILE *keyFile;
+
+    keyFile = fopen("keyFile.txt", "r");
+    fscanf(keyFile, "%d", &key);
+    //fclose(keyFile);
+    printf("%c", key);
+
+    return key;
+}
+
+char encodeRotationWithKey()
+{
+
+    char lineOfInput[400], key=0;
+    FILE *inputFile;
+
+    key = caesarKeyFromFile();
+    printf("Before returns");
+
+    if ((key < -26) || (key > 26))
+    {
+        return 0;
+    }
+
+
+    inputFile = fopen("inputFile.txt", "r");
+    printf("Before Loop");
+    while (!feof(inputFile))
+    {
+        fscanf(inputFile, " c", lineOfInput);
+        printf("File Contents: %c", lineOfInput);
+    }
+    
+    fclose(inputFile);
+
+    return 1;
+}
+
+int main(int argc, char *argv[])
+{
+    printf("Started");
+
+    //char taskNumber = inbuiltCommandSelector();
+    char taskNumber = 1;
+
+    switch (taskNumber) {
+        case 1 :
+            if (encodeRotationWithKey() == 1)
+                printf("Success");
+            else
+                printf("Something went wrong");
+            break;
+        default :
+            printf("Case didnt work");
+        /*case 2:
+            decodeRotationWithKey();
+        */
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+  
+
+   return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 int inbuiltCommandSelector()
 {
-    const char prntCommands[] = "commands",
-                 task1[] = "encode -rotation -key",
-                 task2[] = "decode -rotation -key",
-                 task3[] = "encode -substitution -key",
-                 task4[] = "decode -substitution -key",
-                 task5[] = "decode -rotation",
-                 task6[] = "decode -substitution";
+    const char prntCommands[] = "-arguements",
+                 task1[] = "-encode -rotation -key",
+                 task2[] = "-decode -rotation -key",
+                 task3[] = "-encode -substitution -key",
+                 task4[] = "-decode -substitution -key",
+                 task5[] = "-decode -rotation",
+                 task6[] = "-decode -substitution";
     char command[100];
     int taskNumber = 0;
 
-    printf("Please enter a command. (type commands for list of commands) \n> ");
+    printf("Arguements not given/incorrect. Please enter them here instead. (type -arguements for list of options) \n> ");
     
     do 
     {
@@ -56,19 +157,24 @@ int inbuiltCommandSelector()
     return taskNumber;
 }
 
-int main(int argc, char *argv[])
+int cliCommandSelector(int argc, char *argv[])
 {
+    const char  ARG1[] = "-encode",
+                ARG2[] = "-decode",
+                ARG3[] = "-substitution",
+                ARG4[] = "-rotation",
+                ARG5[] = "-key",
+                ARG6[] = "-nokey";
+
+
     if (argc == 1)
     {
         char taskNumber = inbuiltCommandSelector();
     } else 
     {
-        printf("Yahoo");
+        //do something with the arguements
     }
 
-  
 
-   return 0;
+    return 0;
 }
-
-
