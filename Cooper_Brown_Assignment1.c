@@ -4,28 +4,42 @@
 // This function 
 int inbuiltCommandSelector();
 
-int cliCommandSelector(int argc, char *argv[]);
+int getRotationKey();
 
-char encodeRotationWithKey();
-//void decodeRotationWithKey();
-
-char ceasarKeyFromFile();
-
-char caesarKeyFromFile()
+int getRotationKey()
 {
     // it is specified that the key will be between -26 and 26. 27 is outside this range,
     // so key is invalid by default. Key only becomes valid if a valid key is entered
-    char key = 27;
+    __int128_t fileData[3];
+    char fileData[10] = '0';
+    char *fileDataIndicator;
+    char key = 0;
+
     FILE *keyFile;
 
     keyFile = fopen("keyFile.txt", "r");
-    fscanf(keyFile, "%d", &key);
-    //fclose(keyFile);
-    printf("%c", key);
+    fscanf(keyFile, "%s", fileData);
+    fclose(keyFile);
+
+    printf("%s", fileData);
+
+    
+    key = (char) atoi(fileData);
 
     return key;
 }
 
+
+
+
+
+
+int cliCommandSelector(int argc, char *argv[]);
+
+char encodeRotationWithKey();
+
+
+/*
 char encodeRotationWithKey()
 {
 
@@ -45,34 +59,37 @@ char encodeRotationWithKey()
     printf("Before Loop");
     while (!feof(inputFile))
     {
-        fscanf(inputFile, " c", lineOfInput);
-        printf("File Contents: %c", lineOfInput);
+        fscanf(inputFile, "%s", lineOfInput);
+        printf("File Contents: %d", lineOfInput);
     }
     
     fclose(inputFile);
 
     return 1;
 }
+*/
 
 int main(int argc, char *argv[])
 {
-    printf("Started");
 
-    //char taskNumber = inbuiltCommandSelector();
     char taskNumber = 1;
+
+    //taskNumber = inbuiltCommandSelector();
 
     switch (taskNumber) {
         case 1 :
-            if (encodeRotationWithKey() == 1)
-                printf("Success");
+            ; // declarations cannot be placed directly after a label
+            char key = 0;
+            key = getRotationKey();
+            /*
+            if (encryptFileR(key) == 1)
+                printf("Encryption Successful\n");
             else
-                printf("Something went wrong");
+                printf("Encryption Failed\n");
             break;
-        default :
-            printf("Case didnt work");
-        /*case 2:
-            decodeRotationWithKey();
-        */
+            */
+    return 0;
+
     }
     
     
