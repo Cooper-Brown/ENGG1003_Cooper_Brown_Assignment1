@@ -1,30 +1,119 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+char task1(); // encode rotation cypher with key
+char task2(); // decode rotation cypher with key
+char task3();
+char task4();
+char task5();
+char task6();
+
+char task1()
+{
+    char successful = 0;
+    char key = 0;
+    key = getRotationKey();
+    if (key == 27)
+    {
+        printf("Error:\n");
+        printf("Key file was non-existant or in the wrong format.\n");
+        printf("Please fix the error and try again.\n");
+    }
+    else
+    {
+        performRotation(key);
+        successful = 1;
+    }
+    return successful;
+}
+char task2()
+{
+    char successful = 0;
+    char key = 0;
+    key = -1*getRotationKey();
+    if (key == 27)
+    {
+        printf("Error:\n");
+        printf("Key file was non-existant or in the wrong format.\n");
+        printf("Please fix the error and try again.\n");
+    }
+    else
+    {
+        performRotation(key);
+        successful = 1;
+    }
+    return successful;
+}
+char task3()
+{
+
+}
+char task4()
+{
+
+}
+char task5()
+{
+
+}
+char task6()
+{
+
+}
+
+
+void performRotation(char key);
+
+void performRotation(char key)
+{
+    char lineOfInput[400];
+    FILE *inputFile;
+
+    while 
+
+
+    inputFile = fopen("inputFile.txt", "r");
+    printf("Before Loop");
+    while (!feof(inputFile))
+    {
+        fscanf(inputFile, "%s", lineOfInput);
+        printf("File Contents: %d", lineOfInput);
+    }
+    
+    //fclose(inputFile);
+
+    return 1;
+}
+
+
+
 
 // This function 
 int inbuiltCommandSelector();
 
-int getRotationKey();
+char getRotationKey();
 
-int getRotationKey()
+char getRotationKey()
 {
-    // it is specified that the key will be between -26 and 26. 27 is outside this range,
-    // so key is invalid by default. Key only becomes valid if a valid key is entered
-    __int128_t fileData[3];
-    char fileData[10] = '0';
-    char *fileDataIndicator;
-    char key = 0;
-
+    char key = 27;
+    char itemsMatched = 0;
     FILE *keyFile;
 
     keyFile = fopen("keyFile.txt", "r");
-    fscanf(keyFile, "%s", fileData);
-    fclose(keyFile);
+    if (keyFile != NULL)
+    {
+        itemsMatched = fscanf(keyFile, "%2d", &key);
+        //fclose(keyFile);
+    }
 
-    printf("%s", fileData);
+    if (keyFile != NULL)
+    {
+        if (itemsMatched != 1 || key > 26 || key < 0)
+            key = 27;
+    }
 
-    
-    key = (char) atoi(fileData);
+    //printf("Key: %d", key);
 
     return key;
 }
@@ -36,51 +125,41 @@ int getRotationKey()
 
 int cliCommandSelector(int argc, char *argv[]);
 
-char encodeRotationWithKey();
-
-
-/*
-char encodeRotationWithKey()
-{
-
-    char lineOfInput[400], key=0;
-    FILE *inputFile;
-
-    key = caesarKeyFromFile();
-    printf("Before returns");
-
-    if ((key < -26) || (key > 26))
-    {
-        return 0;
-    }
-
-
-    inputFile = fopen("inputFile.txt", "r");
-    printf("Before Loop");
-    while (!feof(inputFile))
-    {
-        fscanf(inputFile, "%s", lineOfInput);
-        printf("File Contents: %d", lineOfInput);
-    }
-    
-    fclose(inputFile);
-
-    return 1;
-}
-*/
-
 int main(int argc, char *argv[])
 {
-
+    char successful = 0;
     char taskNumber = 1;
 
     //taskNumber = inbuiltCommandSelector();
 
     switch (taskNumber) {
         case 1 :
-            ; // declarations cannot be placed directly after a label
-            char key = 0;
-            key = getRotationKey();
+            successful = task1();
+            break;
+        case 2 :
+            successful = task2();
+            break;
+        case 3 :
+            successful = task3();
+            break;
+        case 4 :
+            successful = task4();
+            break;
+        case 5 :
+            successful = task5();
+            break;
+        case 6 :
+            successful = task6();
+            break;
+    if (successful)
+        printf("Operation completed successfully\n")
+
+
+
+
+
+
+
             /*
             if (encryptFileR(key) == 1)
                 printf("Encryption Successful\n");
