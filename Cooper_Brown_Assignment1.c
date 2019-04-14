@@ -9,6 +9,25 @@ char task4();
 char task5();
 char task6();
 
+char getRotationKey();
+
+void performRotation(char key);
+
+// This function 
+int inbuiltCommandSelector();
+
+int cliCommandSelector(int argc, char *argv[]);
+
+
+
+
+
+
+
+
+
+
+
 char task1()
 {
     char successful = 0;
@@ -63,18 +82,16 @@ char task6()
 }
 
 
-void performRotation(char key);
+
 
 void performRotation(char key)
 {
     char lineOfInput[400];
     FILE *inputFile;
 
-    while 
-
-
     inputFile = fopen("inputFile.txt", "r");
-    printf("Before Loop");
+
+    //printf("Before Loop");
     while (!feof(inputFile))
     {
         fscanf(inputFile, "%s", lineOfInput);
@@ -83,16 +100,9 @@ void performRotation(char key)
     
     //fclose(inputFile);
 
-    return 1;
 }
 
 
-
-
-// This function 
-int inbuiltCommandSelector();
-
-char getRotationKey();
 
 char getRotationKey()
 {
@@ -104,13 +114,9 @@ char getRotationKey()
     if (keyFile != NULL)
     {
         itemsMatched = fscanf(keyFile, "%2d", &key);
-        //fclose(keyFile);
-    }
-
-    if (keyFile != NULL)
-    {
         if (itemsMatched != 1 || key > 26 || key < 0)
             key = 27;
+        //fclose(keyFile);
     }
 
     //printf("Key: %d", key);
@@ -123,7 +129,14 @@ char getRotationKey()
 
 
 
-int cliCommandSelector(int argc, char *argv[]);
+
+
+
+
+
+
+
+
 
 int main(int argc, char *argv[])
 {
@@ -152,7 +165,7 @@ int main(int argc, char *argv[])
             successful = task6();
             break;
     if (successful)
-        printf("Operation completed successfully\n")
+        printf("Operation completed successfully\n");
 
 
 
