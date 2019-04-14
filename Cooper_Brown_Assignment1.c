@@ -15,10 +15,17 @@ void performRotation(char key);
 
 // This function 
 int inbuiltCommandSelector();
-
 int cliCommandSelector(int argc, char *argv[]);
 
+void keyFileFault();
 
+void keyFileFault()
+{
+    printf("Key File Error:\n\n");
+    printf("Key is either:\n-out of range\n-in the wrong format\nOr the file does not exist.\n\n");
+    printf("Encryption could not be completed.\n");
+    printf("Please fix the error with the key file and try again.\n");
+}
 
 
 
@@ -35,9 +42,7 @@ char task1()
     key = getRotationKey();
     if (key == 27)
     {
-        printf("Error:\n");
-        printf("Key file was non-existant or in the wrong format.\n");
-        printf("Please fix the error and try again.\n");
+        keyFileFault();
     }
     else
     {
@@ -53,9 +58,7 @@ char task2()
     key = -1*getRotationKey();
     if (key == 27)
     {
-        printf("Error:\n");
-        printf("Key file was non-existant or in the wrong format.\n");
-        printf("Please fix the error and try again.\n");
+        keyFileFault();
     }
     else
     {
@@ -86,16 +89,39 @@ char task6()
 
 void performRotation(char key)
 {
-    char lineOfInput[400];
-    FILE *inputFile;
+    char inputCharacter;
+    FILE *inputFile, *outputFile;
 
     inputFile = fopen("inputFile.txt", "r");
+    outputFile = fopen("outputFile.txt", "w");
 
-    //printf("Before Loop");
     while (!feof(inputFile))
     {
-        fscanf(inputFile, "%s", lineOfInput);
-        printf("File Contents: %d", lineOfInput);
+        fscanf(inputFile, "%c", &inputCharacter);
+
+        printf("Before: %c\n", inputCharacter);
+
+        // for lower case characters
+        if (inputCharacter >= 97 && inputCharacter <= 122)
+        {
+            inputCharacter += key;
+            if (inputCharacter > 122)
+                inputCharacter = 96 + (inputCharacter - 122);
+            else if (inputCharacter < 97)
+                inputCharacter = 123 - (97 - inputCharacter);
+        }
+
+        // for upper case characters
+        else if (inputCharacter >= 65 && inputCharacter <= 90)
+        {
+            inputCharacter += key;
+            if (inputCharacter > 90)
+                inputCharacter = 64 + (inputCharacter - 90);
+            else if (inputCharacter < 65)
+                inputCharacter = 91 - (65 - inputCharacter);
+        }
+        printf("After: %c\n", inputCharacter);
+        fprintf(outputFile, "%c", inputCharacter);
     }
     
     //fclose(inputFile);
@@ -164,7 +190,8 @@ int main(int argc, char *argv[])
         case 6 :
             successful = task6();
             break;
-    if (successful)
+    }
+    if (successful == 1)
         printf("Operation completed successfully\n");
 
 
@@ -182,24 +209,6 @@ int main(int argc, char *argv[])
             */
     return 0;
 
-    }
-    
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-  
-
-   return 0;
 }
 
 
