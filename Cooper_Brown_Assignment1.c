@@ -11,7 +11,7 @@ char task6();
 
 char getRotationKey();
 
-void performRotation(char key);
+char performRotation(char key);
 
 // This function 
 int inbuiltCommandSelector();
@@ -46,8 +46,7 @@ char task1()
     }
     else
     {
-        performRotation(key);
-        successful = 1;
+        successful = performRotation(key);
     }
     return successful;
 }
@@ -62,14 +61,46 @@ char task2()
     }
     else
     {
-        performRotation(key);
-        successful = 1;
+        successful = performRotation(key);
     }
     return successful;
 }
 char task3()
 {
+    char inputCharacter;
+    char originalLetters[27];
+    char substituteLetters[27]; // 27 because room is required for the end of string/array character
+    FILE *keyFile;
+    
+    keyFile = fopen("keyFile.txt", "r");
 
+    if (keyFile == NULL)
+    {
+        printf("Error: keyFile.txt is not in the current directory");
+        return 0;
+    }
+
+    if (fscanf(keyFile, "%26c%*c%26c", originalLetters, substituteLetters) != 2)
+    {
+        printf("Error: the key is in an incorrect format.\n");
+        return 0;
+    }
+    //fclose(keyFile);
+
+    FILE *inputFile, *outputFile;
+
+    inputFile = fopen("inputFile.txt", "r");
+    outputFile = fopen("outputFile.txt", "w");
+
+    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
+    {
+        for (int index = 0; index < 26; index++)
+        {
+            if (inputCharacter == originalLetters[index])
+        }
+    }
+
+    return 1;
 }
 char task4()
 {
@@ -87,20 +118,34 @@ char task6()
 
 
 
-void performRotation(char key)
-{
+char performRotation(char key)
+{   
+    char errorFlag = 0;
+    int textSize = 1000;
+    char text[textSize];
     char inputCharacter;
     FILE *inputFile, *outputFile;
 
     inputFile = fopen("inputFile.txt", "r");
     outputFile = fopen("outputFile.txt", "w");
 
-    while (!feof(inputFile))
+    if (inputFile == NULL)
     {
-        fscanf(inputFile, "%c", &inputCharacter);
+        printf("Error: inputFile.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    if (outputFile == NULL)
+    {
+        printf("Error: outputFile.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    if (errorFlag = 1)
+        return 0;
 
-        printf("Before: %c\n", inputCharacter);
 
+
+    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
+    {
         // for lower case characters
         if (inputCharacter >= 97 && inputCharacter <= 122)
         {
@@ -120,11 +165,11 @@ void performRotation(char key)
             else if (inputCharacter < 65)
                 inputCharacter = 91 - (65 - inputCharacter);
         }
-        printf("After: %c\n", inputCharacter);
         fprintf(outputFile, "%c", inputCharacter);
     }
     
     //fclose(inputFile);
+    return 1;
 
 }
 
@@ -167,7 +212,7 @@ char getRotationKey()
 int main(int argc, char *argv[])
 {
     char successful = 0;
-    char taskNumber = 1;
+    char taskNumber = 3;
 
     //taskNumber = inbuiltCommandSelector();
 
