@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 char task1(); // encode rotation cypher with key
 char task2(); // decode rotation cypher with key
@@ -9,102 +10,53 @@ char task4();
 char task5();
 char task6();
 
-char getRotationKey();
-
+char getRotationKey(char *key);
 char performRotation(char key);
 
-// This function 
+char getSubstitutionKey(char *originalLetters, char *substituteLetters);
+char performSubstitution(char *originalLetters, char *substituteLetters);
+
 int inbuiltCommandSelector();
 int cliCommandSelector(int argc, char *argv[]);
-
-void keyFileFault();
-
-void keyFileFault()
-{
-    printf("Key File Error:\n\n");
-    printf("Key is either:\n-out of range\n-in the wrong format\nOr the file does not exist.\n\n");
-    printf("Encryption could not be completed.\n");
-    printf("Please fix the error with the key file and try again.\n");
-}
-
-
-
-
-
-
 
 
 
 char task1()
 {
-    char successful = 0;
     char key = 0;
-    key = getRotationKey();
-    if (key == 27)
-    {
-        keyFileFault();
-    }
-    else
-    {
-        successful = performRotation(key);
-    }
-    return successful;
+    if (getRotationKey(&key) == 1)
+        if (performRotation(key) == 1)
+            return 1;
+    return 0;
 }
 char task2()
 {
-    char successful = 0;
     char key = 0;
-    key = -1*getRotationKey();
-    if (key == 27)
-    {
-        keyFileFault();
-    }
-    else
-    {
-        successful = performRotation(key);
-    }
-    return successful;
+    if (getRotationKey(&key) == 1)
+        if (performRotation(-1*key) == 1)
+            return 1;
+    return 0;
 }
 char task3()
 {
-    char inputCharacter;
     char originalLetters[27];
     char substituteLetters[27]; // 27 because room is required for the end of string/array character
-    FILE *keyFile;
     
-    keyFile = fopen("keyFile.txt", "r");
+    if (getSubstitutionKey(originalLetters, substituteLetters) == 1)
+        if (performSubstitution(originalLetters, substituteLetters) == 1)
+            return 1;
+    return 0;
 
-    if (keyFile == NULL)
-    {
-        printf("Error: keyFile.txt is not in the current directory");
-        return 0;
-    }
-
-    if (fscanf(keyFile, "%26c%*c%26c", originalLetters, substituteLetters) != 2)
-    {
-        printf("Error: the key is in an incorrect format.\n");
-        return 0;
-    }
-    //fclose(keyFile);
-
-    FILE *inputFile, *outputFile;
-
-    inputFile = fopen("inputFile.txt", "r");
-    outputFile = fopen("outputFile.txt", "w");
-
-    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
-    {
-        for (int index = 0; index < 26; index++)
-        {
-            if (inputCharacter == originalLetters[index])
-        }
-    }
-
-    return 1;
 }
 char task4()
 {
-
+    char originalLetters[27];
+    char substituteLetters[27]; // 27 because room is required for the end of string/array character
+    
+    if (getSubstitutionKey(originalLetters, substituteLetters) == 1)
+        if (performSubstitution(substituteLetters, originalLetters) == 1) // they are passed the opposite way as the key needs to be performed backwards to decode
+            return 1;
+    return 0;
 }
 char task5()
 {
@@ -116,13 +68,99 @@ char task6()
 }
 
 
+char getSubstitutionKey(char *originalLetters, char *substituteLetters)
+{
+    FILE *keyFile;
+    
+    keyFile = fopen("keyFile.txt", "r");
 
+    if (keyFile == NULL)
+    {
+        printf("Error: keyFile.txt is not in the current directory\n");
+        return 0;
+    }
+
+    if (fscanf(keyFile, "%26c%*c%26c", originalLetters, substituteLetters) != 2)
+    {
+        printf("Error: the key is in an incorrect format.\n");
+        return 0;
+    }
+    //fclose(keyFile);
+    return 1;
+}
+
+char performSubstitution(char *originalLetters, char *substituteLetters)
+{
+        char inputCharacter;
+    FILE *inputFile, *outputFile;
+
+    inputFile = fopen("inputFile.txt", "r");
+    outputFile = fopen("outputFile.txt", "w");
+
+    if (inputFile == NULL)
+    {
+        printf("Error: inputFile.txt is not in the current directory");
+        return 0;
+    }
+    if (outputFile == NULL)
+    {
+        printf("Error: outputFile.txt is not in the current directory");
+        return 0;
+    }
+
+    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
+    {
+        for (int index = 0; index < 26; index++)
+        {
+            if (inputCharacter == originalLetters[index])
+            {
+                inputCharacter = substituteLetters[index];
+                break;
+            }
+            else if (inputCharacter == toupper(originalLetters[index]))
+            {
+                inputCharacter = toupper(substituteLetters[index]);
+                break;
+            }
+        }
+        fprintf(outputFile, "%c", inputCharacter);
+    }
+
+    return 1;
+}
+
+char getRotationKey(char *key)
+{
+    char itemsMatched = 0;
+    FILE *keyFile;
+
+    keyFile = fopen("keyFile.txt", "r");
+    if (keyFile == NULL)
+    {
+        printf("Error: keyFile.txt is not in the current directory\n");
+        return 0;
+    }
+
+    if (fscanf(keyFile, "%2d", key) != 1)
+    {
+        printf("Error: the key is in an incorrect format.\n");
+        return 0;
+    }
+
+    if (*key > 26 || *key < 0)
+    {
+        printf("Error: key is out of range");
+        return 0;
+    }
+
+    //fclose(keyFile);
+    return 1;
+}
 
 char performRotation(char key)
 {   
     char errorFlag = 0;
-    int textSize = 1000;
-    char text[textSize];
+    char text[1000];
     char inputCharacter;
     FILE *inputFile, *outputFile;
 
@@ -139,7 +177,7 @@ char performRotation(char key)
         printf("Error: outputFile.txt is not in the current directory");
         errorFlag = 1;
     }
-    if (errorFlag = 1)
+    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
         return 0;
 
 
@@ -175,25 +213,7 @@ char performRotation(char key)
 
 
 
-char getRotationKey()
-{
-    char key = 27;
-    char itemsMatched = 0;
-    FILE *keyFile;
 
-    keyFile = fopen("keyFile.txt", "r");
-    if (keyFile != NULL)
-    {
-        itemsMatched = fscanf(keyFile, "%2d", &key);
-        if (itemsMatched != 1 || key > 26 || key < 0)
-            key = 27;
-        //fclose(keyFile);
-    }
-
-    //printf("Key: %d", key);
-
-    return key;
-}
 
 
 
@@ -212,7 +232,7 @@ char getRotationKey()
 int main(int argc, char *argv[])
 {
     char successful = 0;
-    char taskNumber = 3;
+    char taskNumber = 1;
 
     //taskNumber = inbuiltCommandSelector();
 
