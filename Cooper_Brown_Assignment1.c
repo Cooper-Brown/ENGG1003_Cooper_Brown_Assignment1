@@ -46,7 +46,7 @@ int main()
             break;
         case 4:
             successful = task4(char *substitutionKey);
-            break;
+            breaket
         case 7:
             successful = task5();
             if (successful == 0)
@@ -191,6 +191,9 @@ char task5()
     for (int key = 0; key < 26; key++)
     {
         for (int inputWordNo = 0)
+        {
+
+        }
         inputCharacter = applyKeyToCharacter(inputCharacter, key)
     }
 
