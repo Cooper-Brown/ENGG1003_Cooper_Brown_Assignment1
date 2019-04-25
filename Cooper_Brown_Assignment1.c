@@ -8,53 +8,71 @@
 
 char getTaskAndKey(char *rotationKey, char *substitutionKey);
 
-char task1(char *rotationKey);
-char task2(char *rotationKey);
-char task3(char *substitutionKey);
-char task4(char *substitutionKey);
+char task1and2(char rotationKey);
+char task3and4(char *originalLetters, char *substituteKey);
 char task5();
-void task6();
+char task6();
 
-char performRotation(char key);
-char applyKeyToCharacter(char inputCharacter, char key);
+char applyRotationKeyToCharacter(char inputCharacter, char key);
 
-char performSubstitution(char *originalLetters, char *substituteLetters);
-char get2DArrayFromFile(char *inputText, char *fileName);
+char get2DArrayFromFile(char inputText[2100][100], char *fileName);
+
+void clearArray(char array[2100][100], int words, int characters);
+
+char crossReference(char *word, char wordBank[2100][100], int maxWords);
+
+char crossReference2(char inputText[2100][100], char wordBank[2100][100], char maxWords);
 
 
 // ___________________________________________________________ MAIN _________________________________________________________ //
 int main()
 {
     char taskNumber = 0;
+
     char rotationKey = 0;
+    char originalLetters[] = "abcdefghijklmnopqrstuvwxyz";
     char substitutionKey[27];
+
     char successful = 0;
 
     taskNumber = getTaskAndKey(&rotationKey, substitutionKey);
-    printf("Task Number: %d\n", taskNumber);
 
     switch (taskNumber)
     {
         case 1:
-            successful = task1(char *rotationKey);
+            printf("Attempting to complete task %d...\n", taskNumber);
+            successful = task1and2(rotationKey);
             break;
         case 2:
-            successful = task2(char *rotationKey);
+            printf("Attempting to complete task %d...\n", taskNumber);
+            successful = task1and2(-1*rotationKey);
             break;
         case 3:
-            successful = task3(char *substitutionKey);
+            printf("Attempting to complete task %d...\n", taskNumber);
+            successful = task3and4(originalLetters, substitutionKey);
             break;
         case 4:
-            successful = task4(char *substitutionKey);
-            breaket
+            printf("Attempting to complete task %d...\n", taskNumber);
+            successful = task3and4(substitutionKey, originalLetters); // input parameters swapped so key is 'reversed'
+            break;
         case 7:
+            taskNumber = 5;
+            printf("Attempting to complete task %d...\n", taskNumber);
             successful = task5();
             if (successful == 0)
-                task6();
+            {
+                printf("Task %d failed\n", taskNumber);
+                taskNumber = 6;
+                printf("Attempting to complete task %d...\n", taskNumber);
+                successful = task6();
+            }
             break;
     }
     if (successful)
-        printf("Operation Successfully Completed\n");
+        printf("Task %d has been completed.\n", taskNumber);
+        // print output file to screen
+    else
+        printf("No task could be completed.\n");
 
     return 0;
 }
@@ -124,150 +142,9 @@ char getTaskAndKey(char *rotationKey, char *substitutionKey)
 }
 
 
-char task1(char *rotationKey)
+char task1and2(char rotationKey)
 {
-    if (performRotation(*rotationKey) == 1)
-        return 1;
-    return 0;
-}
-
-
-char task2(char *rotationKey)
-{
-    if (performRotation(-1*(*rotationKey)) == 1)
-        return 1;
-    return 0;
-}
-
-
-
-char task3(char *substitutionKey)
-{
-    char originalLetters[] = "abcdefghijklmnopqrstuvwxyz";
-    if (performSubstitution(originalLetters, substitutionKey) == 1)
-        return 1;
-    return 0;
-}
-
-
-
-char task4(char *substitutionKey)
-{
-    char originalLetters[] = "abcdefghijklmnopqrstuvwxyz";
-    if (performSubstitution(substitutionKey, originalLetters) == 1) // arrays passed in the opposite way to 'undo' the encryption done by the key
-        return 1;
-    return 0;
-}
-
-
-
-char task5()
-{
-    char inputText[2000][100];
-    char inputTextCopy[2000][100]
-    char wordBank[2100][100];
-
-    char inputCharacter;
-
     char errorFlag = 0;
-
-    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
-    {
-        printf("Error: inputFile.txt is not in the current directory");
-        errorFlag = 1;
-    }
-    if (get2DArrayFromFile(wordBank, "20k.txt") == 0)
-    {
-        printf("Error: 20k.txt is not in the current directory");
-        errorFlag = 1;
-    }
-    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
-        return 0;
-
-
-
-
-
-    for (int key = 0; key < 26; key++)
-    {
-        for (int inputWordNo = 0)
-        {
-
-        }
-        inputCharacter = applyKeyToCharacter(inputCharacter, key)
-    }
-
-
-    for (int inputWord = 0, inputCharacter = 0; inputWord < 2000;)
-    {
-
-    }
-
-
-
-
-
-
-
-        FILE *outputFile;
-
-        outputFile = fopen("outputFile.txt", "w");
-    }
-    
-    if (outputFile == NULL)
-    {
-        printf("Error: outputFile.txt is not in the current directory");
-        errorFlag = 1;
-    }
-
-
-}
-
-
-
-
-
-void task6()
-{
-    FILE *inputFile, *outputFile;
-    char inputText[1000][100];
-    char inputWord[100];
-    char errorFlag = 0;
-    int word = 0;
-
-
-    inputFile = fopen("inputFile.txt", "r");
-    outputFile = fopen("outputFile.txt", "w");
-
-    if (inputFile == NULL)
-    {
-        printf("Error: inputFile.txt is not in the current directory");
-        errorFlag = 1;
-    }
-    if (outputFile == NULL)
-    {
-        printf("Error: outputFile.txt is not in the current directory");
-        errorFlag = 1;
-    }
-    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
-        //fclose()
-        return 0;
-    
-    word = 0;
-    while (fscanf(inputFile, "%s", inputWord) == 1)
-    {
-        inputText
-    }
-}
-
-
-
-
-
-char performRotation(char key)
-{   
-    char errorFlag = 0;
-    char text[1000];
     char inputCharacter;
     FILE *inputFile, *outputFile;
 
@@ -291,43 +168,16 @@ char performRotation(char key)
 
     while (fscanf(inputFile, "%c", &inputCharacter) == 1)
     {
-        inputCharacter = applyKeyToCharacter(inputCharacter, key);
+        inputCharacter = applyRotationKeyToCharacter(inputCharacter, rotationKey);
         fprintf(outputFile, "%c", inputCharacter);
     }
     
     //fclose(inputFile);
     //fclose(outputFile)
     return 1;
-
 }
 
-char applyKeyToCharacter(char inputCharacter, char key)
-{
-    // for lower case characters
-    if (inputCharacter >= 97 && inputCharacter <= 122)
-    {
-        inputCharacter += key;
-        if (inputCharacter > 122)
-            inputCharacter = 96 + (inputCharacter - 122);
-        else if (inputCharacter < 97)
-            inputCharacter = 123 - (97 - inputCharacter);
-    }
-
-    // for upper case characters
-    else if (inputCharacter >= 65 && inputCharacter <= 90)
-    {
-        inputCharacter += key;
-        if (inputCharacter > 90)
-            inputCharacter = 64 + (inputCharacter - 90);
-        else if (inputCharacter < 65)
-            inputCharacter = 91 - (65 - inputCharacter);
-    }
-    return inputCharacter;
-}
-
-
-// add file closes before each return
-char performSubstitution(char *originalLetters, char *substituteLetters)
+char task3and4(char *originalLetters, char *substituteLetters)
 {
     char inputCharacter;
     FILE *inputFile, *outputFile;
@@ -367,15 +217,148 @@ char performSubstitution(char *originalLetters, char *substituteLetters)
     return 1;
 }
 
+char task5()
+{
+    int maxWords = 2100;
+    int maxCharacters = 100;
+    char inputText[maxWords][maxCharacters];
+    char inputTextOriginal[maxWords][maxCharacters];
+    char wordBank[maxWords][maxCharacters];
+    clearArray(inputText, maxWords, maxCharacters);
+    clearArray(inputTextOriginal, maxWords, maxCharacters);
+    clearArray(wordBank, maxWords, maxCharacters);
 
-char get2DArrayFromFile(char *inputText, char *fileName)
+    char errorFlag = 0;
+
+
+    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
+    {
+        printf("Error: inputFile.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() not used as the array is 2D
+
+    if (get2DArrayFromFile(wordBank, "20k.txt") == 0)
+    {
+        printf("Error: 20k.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
+        return 0;
+
+    
+
+
+
+
+    
+    int hit = 0, noHit = 0;
+
+    for (int key = 7; key < 8; key++)
+    {
+        hit = 0;
+        noHit = 0;
+        // _________rotates everything in array_________________ //
+        for (int word = 0; word < maxWords; word++)
+        {
+            for (int letter = 0; letter < maxCharacters; letter++)
+            {
+                inputText[word][letter] = applyRotationKeyToCharacter(inputTextOriginal[word][letter], (-1*key));
+            }
+        }
+
+
+        // ___________cross references a word from input with every word in wordbank
+        for (int word = 0; word < maxWords; word++)
+        {
+            if (inputText[word][0] == 0) // ends the search if the word is empty (meaning all words have been searched)
+                break;
+            if (crossReference(inputText[word], wordBank, maxWords) == 1)
+                hit++;
+            else
+                noHit++;
+            
+        }
+
+        printf("Hits: %d noHits: %d\n", hit, noHit);
+        if ((hit*1.0)/(hit+noHit) > 0.5)
+        {
+            printf("The key is %d\n", key);
+            task1and2((-1)*key);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+char task6()
+{
+    FILE *inputFile, *outputFile;
+    char inputText[1000][100];
+    char inputWord[100];
+    char errorFlag = 0;
+    int word = 0;
+
+
+    inputFile = fopen("inputFile.txt", "r");
+    outputFile = fopen("outputFile.txt", "w");
+
+    if (inputFile == NULL)
+    {
+        printf("Error: inputFile.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    if (outputFile == NULL)
+    {
+        printf("Error: outputFile.txt is not in the current directory");
+        errorFlag = 1;
+    }
+    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
+        //fclose()
+        return 0;
+    
+    word = 0;
+    while (fscanf(inputFile, "%s", inputWord) == 1)
+    {
+        inputText;
+    }
+}
+
+char applyRotationKeyToCharacter(char inputCharacter, char key)
+{
+    if (inputCharacter >= 65 && inputCharacter <= 90)
+        inputCharacter += 32;
+    // for lower case characters
+    if (inputCharacter >= 97 && inputCharacter <= 122)
+    {
+        inputCharacter += key;
+        if (inputCharacter > 122)
+            inputCharacter = 96 + (inputCharacter - 122);
+        else if (inputCharacter < 97)
+            inputCharacter = 123 - (97 - inputCharacter);
+    }
+    /*
+    // for upper case characters
+    else if (inputCharacter >= 65 && inputCharacter <= 90)
+    {
+        inputCharacter += key;
+        if (inputCharacter > 90)
+            inputCharacter = 64 + (inputCharacter - 90);
+        else if (inputCharacter < 65)
+            inputCharacter = 91 - (65 - inputCharacter);
+    }
+    */
+    return inputCharacter;
+}
+
+char get2DArrayFromFile(char inputText[2100][100], char *fileName)
 { 
     FILE *inputFile;
     char inputCharacter;
     int word = 0, letter = 0;
 
-
-    inputFile = fopen(*fileName, "r");
+    inputFile = fopen(fileName, "r");
 
     if (inputFile == NULL)
     {
@@ -387,17 +370,96 @@ char get2DArrayFromFile(char *inputText, char *fileName)
     letter = 0;
     while (fscanf(inputFile, "%c", &inputCharacter) == 1)
     {
-        inputText[word][letter] = inputCharacter;
-        if (inputCharacter == 32)
+        if ((inputCharacter == 32) || (inputCharacter == 10))
         {
             word++;
             letter = 0;
         }
         else
+        {
+            inputText[word][letter] = inputCharacter;
             letter++;
-        
+        }
+        if (word > 2099)
+            break;
     }
-    inputText[word][letter] = 0;
     //fclose()
     return 1;
+}
+
+void clearArray(char array[2100][100], int words, int characters)
+{
+    int xIndex, yIndex;
+    for (xIndex = 0; xIndex < words; xIndex++)
+    {
+        for (yIndex = 0; yIndex < characters; yIndex++)
+        {
+            array[xIndex][yIndex] = 0;
+        }
+    }
+}
+
+char crossReference2(char inputText[2100][100], char wordBank[2100][100], char maxWords)
+{
+    char wordBankEditable[100]; // does not need clearing as it is copied to from another array
+
+    // ___________cross references a word from input with every word in wordbank
+    for (int word = 0; word < maxWords; word++)
+    {
+        if (inputText[word][0] == 0) // skips over the empty space left at the end of the array
+            break;
+        for (int wordBankWord = 0; wordBankWord < maxWords; wordBankWord++)
+        {
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], wordBank[wordBankWord]) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,".")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,",")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,"?")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,"!")) == 0)
+                return 1;
+        }
+    }
+    return 0;
+}
+
+char crossReference(char *word, char wordBank[2100][100], int maxWords)
+{
+    char wordBankEditable[100]; // does not need clearing as it is copied to from another array
+
+    for (int wordBankWord = 0; wordBankWord < maxWords; wordBankWord++)
+    {
+        printf("I:%s---B:%s---\n", word, wordBank[wordBankWord]);
+        strcpy(wordBankEditable, wordBank[wordBankWord]);
+        if (strcmp(word, wordBank[wordBankWord]) == 0)
+            return 1;
+
+        strcpy(wordBankEditable, wordBank[wordBankWord]);
+        if (strcmp(word, strcat(wordBankEditable,".")) == 0)
+            return 1;
+
+        strcpy(wordBankEditable, wordBank[wordBankWord]);
+        if (strcmp(word, strcat(wordBankEditable,",")) == 0)
+            return 1;
+
+        strcpy(wordBankEditable, wordBank[wordBankWord]);
+        if (strcmp(word, strcat(wordBankEditable,"?")) == 0)
+            return 1;
+
+        strcpy(wordBankEditable, wordBank[wordBankWord]);
+        if (strcmp(word, strcat(wordBankEditable,"!")) == 0)
+            return 1;
+    }
+    return 0;
 }

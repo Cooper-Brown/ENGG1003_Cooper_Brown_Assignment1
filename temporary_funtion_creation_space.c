@@ -1,31 +1,91 @@
-char get2DArrayFromFile(char *inputText)    
-    FILE *inputFile;
-    char inputCharacter;
-    int word = 0, letter = 0;
+char crossReference(char **inputText, char **wordBank, char maxWords)
+{ 
+    char wordBankEditable[100]; // does not need clearing as it is copied to from another array
 
-
-    inputFile = fopen("inputFile.txt", "r");
-
-    if (inputFile == NULL)
+    // ___________cross references a word from input with every word in wordbank
+    for (int word = 0; word < maxWords; word++)
     {
-        printf("Error: inputFile.txt is not in the current directory");
-        return 0;
-    }
-
-    word = 0;
-    letter = 0;
-    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
-    {
-        inputText[word][letter] = inputCharacter;
-        if (inputCharacter == 32)
+        if (inputText[word][0] == 0) // skips over the empty space left at the end of the array
+            break;
+        for (int wordBankWord = 0; wordBankWord < maxWords; wordBankWord++)
         {
-            word++;
-            letter = 0;
-        }
-        else
-            letter++;
-        
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], wordBank[wordBankWord]) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,".")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,",")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,"?")) == 0)
+                return 1;
+
+            strcpy(wordBankEditable, wordBank[wordBankWord]);
+            if (strcmp(inputText[word], strcat(wordBankEditable,"!")) == 0)
+                return 1;
     }
-    inputText[word][letter] = 0;
-    //fclose()
-    return 1;
+    return 0;
+}
+
+
+
+
+
+
+// ___________cross references a word from input with every word in wordbank
+        for (int word = 0; word < maxWords; word++)
+        {
+            if (inputText[word][0] == 0) // skips over the empty space left at the end of the array
+                break;
+            for (int wordBankWord = 0; wordBankWord < maxWords; wordBankWord++)
+            {
+                strcpy(wordBankEditable, wordBank[wordBankWord]);
+                if (strcmp(inputText[word], wordBank[wordBankWord]) == 0)
+                {
+                    hitFlag = 1;
+                    hit++;
+                    break;
+                }
+
+                strcpy(wordBankEditable, wordBank[wordBankWord]);
+                if (strcmp(inputText[word], strcat(wordBankEditable,".")) == 0)
+                {
+                    hitFlag = 1;
+                    hit++;
+                    break;
+                }
+
+                strcpy(wordBankEditable, wordBank[wordBankWord]);
+                if (strcmp(inputText[word], strcat(wordBankEditable,",")) == 0)
+                {
+                    hitFlag = 1;
+                    hit++;
+                    break;
+                }
+
+                strcpy(wordBankEditable, wordBank[wordBankWord]);
+                if (strcmp(inputText[word], strcat(wordBankEditable,"?")) == 0)
+                {
+                    hitFlag = 1;
+                    hit++;
+                    break;
+                }
+
+                strcpy(wordBankEditable, wordBank[wordBankWord]);
+                if (strcmp(inputText[word], strcat(wordBankEditable,"!")) == 0)
+                {
+                    hitFlag = 1;
+                    hit++;
+                    break;
+                }
+                
+            }
+            if (hitFlag != 1)
+                noHit++;
+            hitFlag = 0; 
+        }
