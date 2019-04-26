@@ -11,7 +11,7 @@ char getTaskAndKey(char *rotationKey, char *substitutionKey);
 char task1and2(char rotationKey);
 char task3and4(char *originalLetters, char *substituteKey);
 char task5();
-char task6();
+char task6(originalLetters);
 
 char applyRotationKeyToCharacter(char inputCharacter, char key);
 
@@ -64,7 +64,7 @@ int main()
                 printf("Task %d failed\n", taskNumber);
                 taskNumber = 6;
                 printf("Attempting to complete task %d...\n", taskNumber);
-                successful = task6();
+                successful = task6(originalLetters);
             }
             break;
     }
@@ -292,37 +292,44 @@ char task5()
 }
 
 
-char task6()
+char task6(char *originalLetters)
 {
-    FILE *inputFile, *outputFile;
-    char inputText[1000][100];
-    char inputWord[100];
+    int maxWords = 2100;
+    int maxCharacters = 100;
+    char inputText[maxWords][maxCharacters];
+    char inputTextOriginal[maxWords][maxCharacters];
+    char wordBank[maxWords][maxCharacters];
+    clearArray(inputText, maxWords, maxCharacters);
+    clearArray(inputTextOriginal, maxWords, maxCharacters);
+    clearArray(wordBank, maxWords, maxCharacters);
+
     char errorFlag = 0;
-    int word = 0;
 
+    int letterFrequencies[27];
 
-    inputFile = fopen("inputFile.txt", "r");
-    outputFile = fopen("outputFile.txt", "w");
-
-    if (inputFile == NULL)
+    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
     {
         printf("Error: inputFile.txt is not in the current directory");
         errorFlag = 1;
     }
-    if (outputFile == NULL)
+    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() not used as the array is 2D
+
+    if (get2DArrayFromFile(wordBank, "20k.txt") == 0)
     {
-        printf("Error: outputFile.txt is not in the current directory");
+        printf("Error: 20k.txt is not in the current directory");
         errorFlag = 1;
     }
     if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
-        //fclose()
         return 0;
     
-    word = 0;
-    while (fscanf(inputFile, "%s", inputWord) == 1)
+
+    for (int index = 0; index < 26; index++)
     {
-        inputText;
+        
     }
+    
+
+
 }
 
 char applyRotationKeyToCharacter(char inputCharacter, char key)
