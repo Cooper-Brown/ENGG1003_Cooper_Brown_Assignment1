@@ -254,7 +254,7 @@ char task5()
     
     int hit = 0, noHit = 0;
 
-    for (int key = 0; key < 26; key++)
+    for (int key = 7; key < 8; key++)
     {
         hit = 0;
         noHit = 0;
@@ -280,7 +280,7 @@ char task5()
             
         }
 
-        //printf("Hits: %d noHits: %d\n", hit, noHit);
+        printf("Hits: %d noHits: %d\n", hit, noHit);
         if ((hit*1.0)/(hit+noHit) > 0.5)
         {
             printf("The key is %d\n", key);
@@ -305,12 +305,7 @@ char task6(char *originalLetters)
 
     char errorFlag = 0;
 
-    char standardLetterFrequencies[26] = "etaoinsrhdlucmfywgpbvkxqjz";
-    int letterCounts[26];
-    for (int index = 0; index < 26; index++)
-        letterCounts[index] = 0;
-
-
+    int letterFrequencies[27];
 
     if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
     {
@@ -326,75 +321,15 @@ char task6(char *originalLetters)
     }
     if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
         return 0;
+    
 
-    printf("Starting loops\n");
-    for (int word = 0; word < maxWords; word++)
-        {
-            for (int letter = 0; letter < maxCharacters; letter++)
-            {   
-                for (int elementOfLetterFrequencies = 0; elementOfLetterFrequencies < 26; elementOfLetterFrequencies++)
-                {
-                    //printf("iterator---%d---word---%d---letter---%d\n", elementOfLetterFrequencies, word, letter);
-                    //printf("%c---%c\n", standardLetterFrequencies[elementOfLetterFrequencies], inputText[word][letter]);
-                    if (inputText[word][letter] >= 65 && inputText[word][letter] <= 90)
-                        inputText[word][letter] += 32;
-                    if (standardLetterFrequencies[elementOfLetterFrequencies] == inputText[word][letter])
-                    {
-                        letterCounts[elementOfLetterFrequencies] += 1;
-                    }
-                }
-            }
-        }
-
-    int highestIndex = 0, startIndex = 0, tempi = 0;
-    char tempc, inputLetterFrequencies[27];
-    strcpy(inputLetterFrequencies, standardLetterFrequencies);
-
-    for (int startIndex = 0; startIndex < 26; startIndex++)
+    for (int index = 0; index < 26; index++)
     {
-        highestIndex = startIndex;
-        for (int index = startIndex+1; index < 26; index++)
-        {
-            if (letterCounts[index] > letterCounts[highestIndex])
-                highestIndex = index;
-        }
-        tempi = letterCounts[startIndex];
-        letterCounts[startIndex] = letterCounts[highestIndex];
-        letterCounts[highestIndex] = tempi;
-        tempc = inputLetterFrequencies[startIndex];
-        inputLetterFrequencies[startIndex] = inputLetterFrequencies[highestIndex];
-        inputLetterFrequencies[highestIndex] = tempc;
-    }
-         
-    printf("Key: %s\n", inputLetterFrequencies);
-
-    /*
-    for (int word = 0; word < maxWords; word++)
-    {
-        for (int letter = 0; letter < maxCharacters; letter++)
-        {
-            for (int letterFrequenciesIndex = 0; letterFrequenciesIndex < 26; letterFrequenciesIndex++)
-            {
-                if (inputText[word][letter] == standardLetterFrequencies[letterFrequenciesIndex])
-                {
-                    inputText[word][letter] = inputLetterFrequencies[letterFrequenciesIndex];
-                    break;
-                }
-            }
-        }
-    }
-
-
-    for (int word = 0; word < maxWords; word++)
-    {
-        if (strcmp(inputText[word], "anh") == 1)
-            
         
     }
     
-*/
-    task3and4(inputLetterFrequencies, standardLetterFrequencies);
-    return 1;
+
+
 }
 
 char applyRotationKeyToCharacter(char inputCharacter, char key)
@@ -512,7 +447,7 @@ char crossReference(char *word, char wordBank[2100][100], int maxWords)
 
     for (int wordBankWord = 0; wordBankWord < maxWords; wordBankWord++)
     {
-        //printf("I:%s---B:%s---\n", word, wordBank[wordBankWord]);
+        printf("I:%s---B:%s---\n", word, wordBank[wordBankWord]);
         strcpy(wordBankEditable, wordBank[wordBankWord]);
         if (strcmp(word, wordBank[wordBankWord]) == 0)
             return 1;
