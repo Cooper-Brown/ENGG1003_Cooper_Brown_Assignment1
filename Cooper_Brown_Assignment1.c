@@ -1,3 +1,69 @@
+// ___________________________________________________ READ ME ___________________________________________________ //
+/*
+NOTE: this comment block contains the same information as the file README.txt
+
+My Details:
+Name: Cooper Brown
+ID: 3324706
+Date: 29/04/19
+
+Name of .c file: Cooper_Brown_Assignment1.c
+Note: There are a lot of other files in this git folder. All the irrelevant ones should be contained in a separate folder
+
+Instructions for use:
+1. Place the text block that needs to be processed into the file inputFile.txt
+2. Format keyFile.txt for the operation you want to perform
+    a. The first line should be either the word 'encode' or 'decode'
+    b. place in the second line 'key: ' (space is important) followed by either
+        i. a number from 0-26 (representing a rotation key)
+        ii. a series of letters e.g. 'stuvwghijklmnoabcdefpqrxyz' where s = a, t = b etc.
+            (This represents a substitution key)
+        iii. nothing (if you want to decode without a key)
+            Note: this option only works for decryption
+            Note: This will try to decrypt the file using caeser then substitution if the caeser fails. 
+       The key type will be automatically detected and the task selected based on this
+
+Task Number Key:
+Task1 = encryption using caesar key
+Task2 = decryption using caesar key
+Task3 = encryption using substitution key
+Task4 = decryption using substitution key
+Task5 = decryption of caesar cypher without key
+Task6 = decryption of substitution cypher without key
+
+
+keyFile.txt formatting examples:
+Task1:
+encode
+key: 21
+
+Task2:
+decode
+key: 14
+
+Task3:
+encode
+key: stuvwghijklmnoabcdefpqrxyz
+
+Task4:
+decode
+key: stuvwghijklmnoabcdefpqrxyz
+
+Task5:
+decode
+key: 
+
+Task6:
+decode
+key: 
+
+*/
+
+
+
+
+
+
 // ___________________________________________________ IMPORTED LIBRARIES ___________________________________________________ //
 #include <stdio.h>
 #include <stdlib.h>
@@ -256,19 +322,26 @@ char task1and2(char rotationKey)
    2. outputFile.txt is modified
 
    Functionality:
-   1. 
+   1. Checks for the existance of relevant files and opens them
+   2. Loops through every character of the input file
+   3. In this loop, the new character is determined by searching for the input character in originalLetters and assigning the corresponding value in substituteLetters
+   4. This new character is turned to upper case and written to outputFile.txt
+
+   Limitations:
+   1. An unreasonably large inputFile is not tested for and no prompts will be given to the user surrounding this
+   2. Function only writes to the file uppercase letters and the original casing of the input is not retained (neccessary for specifications)
 */
 char task3and4(char *originalLetters, char *substituteLetters)
 {
     //______INITIALISATION______
-    char inputCharacter;
-    FILE *inputFile, *outputFile;
+    char inputCharacter; // holds the character of the input file being processed
+    FILE *inputFile, *outputFile; // holds pointers to the relevant file locations
 
     //______FUNCTION PROCESSING______
     inputFile = fopen("inputFile.txt", "r");
     outputFile = fopen("outputFile.txt", "w");
 
-    if (inputFile == NULL)
+    if (inputFile == NULL) // checks if the file exists so if not, execution can be halted prior to an error
     {
         printf("Error: inputFile.txt is not in the current directory");
         return 0;
@@ -279,26 +352,26 @@ char task3and4(char *originalLetters, char *substituteLetters)
         return 0;
     }
 
-    while (fscanf(inputFile, "%c", &inputCharacter) == 1)
+    while (fscanf(inputFile, "%c", &inputCharacter) == 1) // loops through each character of the file. Since there are no arrays holding the input this one loop saves processing time
     {
-        for (int index = 0; index < 26; index++)
+        for (int index = 0; index < 26; index++) // searches through each of the letters in the input string originalLetters. Index is used to access both of the arrays
         {
-            if (inputCharacter == originalLetters[index])
+            if (inputCharacter == originalLetters[index]) // if the input character matches the letter in the first array, then it is assigned the corresponding value of the other
             {
                 inputCharacter = substituteLetters[index];
-                break;
+                break; // process broken as since the letter is found the rest do not need to be searched through
             }
-            else if (inputCharacter == toupper(originalLetters[index]))
+            else if (inputCharacter == toupper(originalLetters[index])) // if input character is uppercase then it is assigned its correspondint uppercase value
             {
                 inputCharacter = toupper(substituteLetters[index]);
                 break;
             }
         }
-        if (inputCharacter >= 97 && inputCharacter <= 122)
+        if (inputCharacter >= 97 && inputCharacter <= 122) // ensures that the character written to outputFile.txt is uppercase
             inputCharacter -= 32;
         fprintf(outputFile, "%c", inputCharacter);
     }
-    fclose(inputFile);
+    fclose(inputFile); // these file closes are necessary as outputFile is re-opened later
     fclose(outputFile);
     return 1;
 }
@@ -306,128 +379,175 @@ char task3and4(char *originalLetters, char *substituteLetters)
 
 
 
+/* This function attempts to perform decryption by assuming the input text was encoded with a caeser cypher
+    
+    Input:
+    1. No direct input except that from inputFile.txt
 
+    Return:
+    1. A boolean value held in a char where 1 means the cypher was cracked and 0 means it was not
+    2. outputFile.txt may get written to
+
+    Functionality:
+    1. calls functions to get 2D arrays of the word bank and input. Halts execution if something goes wrong with this process
+    2. Loops through every possible key from 0-26
+    3. In this loop, every character in the input array is rotated by the key
+    4. Then, still in the loop, each word in the input array is spell checked against the wordbank, counting the number of matches
+    5. If greater than 50% of the words match, the key is considered correct and task1and2 is performed using the found key
+
+    Limitations:
+    1. The 2D arrays processed have a maximum size of [2100][100] (including the wordbank, which may result in less matches being found than would actually be possible)
+    2. Inefficient processing as same file is accessed more than once to get the same information (because im too lazy to write a loop)
+    4. The first match over 50% is assumed correct, instead of assuming that the key with the most matches is correct. This is to allow a substitution decryption
+        to be attempted if a fail is suspected, however may lead to the correct key being skipped over
+*/
 char task5()
 {
-    int maxWords = 2100;
-    int maxCharacters = 100;
-    char inputText[maxWords][maxCharacters];
-    char inputTextOriginal[maxWords][maxCharacters];
-    char wordBank[maxWords][maxCharacters];
+    //______INITIALISATION______
+    int maxWords = 2100; // remembers the maximum number of words that can be held by the arrays of this function
+    int maxCharacters = 100; // remembers the maximum number characters per word that can be held by the arrays of this function
+    char inputText[maxWords][maxCharacters]; // holds the contents of the input file
+    char inputTextOriginal[maxWords][maxCharacters]; // an original copy of the input file that does not get modified. The key is applied to the contents of this array since the key is for the original text
+    char wordBank[maxWords][maxCharacters]; // holds the contents of the wordbank
+    // the above 2D arrays are cleared by the below funtions so that they all contain 0s and no previous values are carried over
     clearArray(inputText, maxWords, maxCharacters);
     clearArray(inputTextOriginal, maxWords, maxCharacters);
     clearArray(wordBank, maxWords, maxCharacters);
 
-    char errorFlag = 0;
+    char errorFlag = 0; // flag to indicate whether an error has occured or not. It is used to ensure that all relevant error messages get displayed
 
+    int hit = 0, noHit = 0; // stores the number of times a match with the wordbank was found, and the times that it wasn't found
 
-    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
+    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0) // if the file does not exist, the called function will return 0 signalling an error, which is indicated
     {
         printf("Error: inputFile.txt is not in the current directory");
         errorFlag = 1;
     }
-    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() not used as the array is 2D
+    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() cannot used as the array is 2D. Another alternative would be an embedded loop, however this function already exists
 
-    if (get2DArrayFromFile(wordBank, "20k.txt") == 0)
+    if (get2DArrayFromFile(wordBank, "20k.txt") == 0) // obtains the wordbank and signals any potential errors
     {
         printf("Error: 20k.txt is not in the current directory");
         errorFlag = 1;
     }
-    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
+    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each before the error is indicated.
         return 0;
 
-    
 
-
-
-
-    
-    int hit = 0, noHit = 0;
-
-    for (int key = 0; key < 26; key++)
+    for (int key = 0; key < 26; key++) // every key needs to be tested
     {
-        hit = 0;
+        hit = 0; // resets hit and noHit for each key/combinbination
         noHit = 0;
-        // _________rotates everything in array_________________ //
+        // these embedded loops rotate each character in the input array
         for (int word = 0; word < maxWords; word++)
         {
             for (int letter = 0; letter < maxCharacters; letter++)
             {
-                inputText[word][letter] = applyRotationKeyToCharacter(inputTextOriginal[word][letter], (-1*key));
+                // The key is applied to the original input. inputText can be reassigned as we have this intact copy saved
+                inputText[word][letter] = applyRotationKeyToCharacter(inputTextOriginal[word][letter], (-1*key)); 
             }
         }
 
 
-        // ___________cross references a word from input with every word in wordbank
+        // this loop cross references a word from input with every word in wordbank
         for (int word = 0; word < maxWords; word++)
         {
-            if (inputText[word][0] == 0) // ends the search if the word is empty (meaning all words have been searched)
+            if (inputText[word][0] == 0) // ends the search if the word is empty (meaning all words have been searched). This saves unnecessary processing and therefore time
                 break;
-            if (crossReference(inputText[word], wordBank, maxWords) == 1)
-                hit++;
+            if (crossReference(inputText[word], wordBank, maxWords) == 1) // this function determines if a match was found
+                hit++; // remembers the times a match was found
             else
-                noHit++;
+                noHit++; // remembers the times no match was found
             
         }
 
-        //printf("Hits: %d noHits: %d\n", hit, noHit);
-        if ((hit*1.0)/(hit+noHit) > 0.5)
+        // this formula determines if greater than 50% of the words match. This number is arbitrary, but I think it is low enough to catch any error but too high to be accidentally be triggered
+        if ((hit*1.0)/(hit+noHit) > 0.5) 
         {
-            printf("The key used to originally ENCODE the text is %d\n\n", key);
-            task1and2((-1)*key);
-            return 1;
+            printf("The key used to originally ENCODE the text is %d\n\n", key); // the key used to originally encode the input and the key used to decode are two different things
+            task1and2((-1)*key); // this function will actually perform the rotations on the input file and store it in the output, since all that has been done is the key has been determined
+            return 1; // the function is exited early if a match is suspected
         }
     }
     return 0;
 }
 
 
+
+
+
+
+/* This function performs decryption assuming the input was encoded with a substitution cypher. 
+    Note that it is not very good, and only correctly determines around 30% of the substitute characters
+
+    Input:
+    1. A pointer to a string of 26 letters representing the letters to be substituted
+
+    Output:
+    1. A boolean flag stored in a char where 1 means the task was completed and 0 means an error occured
+    2. outputFile.txt may get modified
+
+    Funtionality:
+    1. Obtains arrays containing the input file and word bank (even though this is not used) and informs user of any errors that occured in this process
+    2. Counts the number of times each relevant character in the file occurs
+    3. Sorts these frequencies
+    4. Calls a function to substitute the relative letter frequencies of those in the file with those known for the english language
+
+    Limitations:
+    1. The 2D arrays worked with have a maximum size of [2100][100]
+    2. Inefficient processes as wordbank is never used
+    3. The key printed is not in alphabetical order so takes longer to read through
+*/
 char task6(char *originalLetters)
 {
-    int maxWords = 2100;
-    int maxCharacters = 100;
-    char inputText[maxWords][maxCharacters];
-    char inputTextOriginal[maxWords][maxCharacters];
-    char wordBank[maxWords][maxCharacters];
+    //______INITIALISATION______
+    int maxWords = 2100; // remembers the maximum number of words that can be held by the arrays of this function
+    int maxCharacters = 100; // remembers the maximum number characters per word that can be held by the arrays of this function
+    char inputText[maxWords][maxCharacters]; // holds the contents of the input file
+    char inputTextOriginal[maxWords][maxCharacters]; // an original copy of the input file that does not get modified. The key is applied to the contents of this array since the key is for the original text
+    char wordBank[maxWords][maxCharacters]; // holds the contents of the wordbank
+    // the above 2D arrays are cleared by the below funtions so that they all contain 0s and no previous values are carried over
     clearArray(inputText, maxWords, maxCharacters);
     clearArray(inputTextOriginal, maxWords, maxCharacters);
     clearArray(wordBank, maxWords, maxCharacters);
 
-    char errorFlag = 0;
+    char errorFlag = 0; // flag to indicate whether an error has occured or not. It is used to ensure that all relevant error messages get displayed
 
-    char standardLetterFrequencies[26] = "etaoinsrhdlucmfywgpbvkxqjz";
-    int letterCounts[26];
-    for (int index = 0; index < 26; index++)
+    // stores a string of characters by their frequency. Will be used to determine what letters in the input will be substituted with
+    char standardLetterFrequencies[26] = "etaoinsrhdlucmfywgpbvkxqjz"; 
+    int letterCounts[26]; // empty array that will store the numbers each of the above letters occur in the input
+    for (int index = 0; index < 26; index++) // since clearArray only works for 2D arrays, this array needs to be cleared manually
         letterCounts[index] = 0;
 
+    //______FUNCTION PROCESSING______
 
-
-    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0)
+    if (get2DArrayFromFile(inputText, "inputFile.txt") == 0) // if the file does not exist, the called function will return 0 signalling an error, which is indicated
     {
         printf("Error: inputFile.txt is not in the current directory");
         errorFlag = 1;
     }
-    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() not used as the array is 2D
+    get2DArrayFromFile(inputTextOriginal, "inputFile.txt"); // strcpy() cannot used as the array is 2D. Another alternative would be an embedded loop, however this function already exists
 
-    if (get2DArrayFromFile(wordBank, "20k.txt") == 0)
+    if (get2DArrayFromFile(wordBank, "20k.txt") == 0) // obtains the wordbank and signals any potential errors
     {
         printf("Error: 20k.txt is not in the current directory");
         errorFlag = 1;
     }
-    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each.
+    if (errorFlag == 1) // having the flag may seem useless but if both files are missing I want an error message for each before a failure is indicated.
         return 0;
 
+    // these first two loops ensure that inside them each of the characters in the input array are accessed at some point in time
     for (int word = 0; word < maxWords; word++)
         {
             for (int letter = 0; letter < maxCharacters; letter++)
             {   
+                // this inner loop goes through each letter in the standardLetterFrequencies
                 for (int elementOfLetterFrequencies = 0; elementOfLetterFrequencies < 26; elementOfLetterFrequencies++)
                 {
-                    //printf("iterator---%d---word---%d---letter---%d\n", elementOfLetterFrequencies, word, letter);
-                    //printf("%c---%c\n", standardLetterFrequencies[elementOfLetterFrequencies], inputText[word][letter]);
-                    if (inputText[word][letter] >= 65 && inputText[word][letter] <= 90)
+                    // this selection ensures that letters are turned into lowercase before they are compared with the lowercase letter frequency array
+                    if (inputText[word][letter] >= 65 && inputText[word][letter] <= 90) 
                         inputText[word][letter] += 32;
-                    if (standardLetterFrequencies[elementOfLetterFrequencies] == inputText[word][letter])
+                    if (standardLetterFrequencies[elementOfLetterFrequencies] == inputText[word][letter]) // this selection adds 1 to the frequency count of any found letter
                     {
                         letterCounts[elementOfLetterFrequencies] += 1;
                     }
@@ -435,48 +555,47 @@ char task6(char *originalLetters)
             }
         }
 
-    int highestIndex = 0, startIndex = 0, tempi = 0;
-    char tempc, inputLetterFrequencies[27];
-    strcpy(inputLetterFrequencies, standardLetterFrequencies);
+    //______MORE INITIALISATION______
 
+    // highestIndex stores the index of the highest number in the search. 
+    // startIndex stores where the sort will start from each iteration of the loop. This ensures that the already sorted values are not mixed with the unsorted
+    // tempi is a temporary integer used to swap two other integers
+    int highestIndex = 0, startIndex = 0, tempi = 0; 
+
+    // tempc is a temporary char used to swap two other chars. 
+    // inputLetterFrequencies holds an editable copy of standardLetterFrequencies. It is to be sorted
+    char tempc, inputLetterFrequencies[27]; 
+    strcpy(inputLetterFrequencies, standardLetterFrequencies); // makes inputLetterFrequencies a copy of standardLetterFrequencies
+
+    //______MORE PROCESSING______
+    // this loop is a sort (I'm pretty sure it is a selection sort). 
+    // Its purpose is to sort the frequencies in letterCounts and at the same time sort inputLetterFrequencies so the two arrays 'line up'
+    // this sorted array can then be substituted with the array of known frequencies to decode the input
     for (int startIndex = 0; startIndex < 26; startIndex++)
     {
-        highestIndex = startIndex;
-        for (int index = startIndex+1; index < 26; index++)
+        highestIndex = startIndex; // at the time this iteration starts, the highest element is also the first element as none have been scanned yet
+        for (int index = startIndex+1; index < 26; index++) // loops through the array, starting at the next unscanned number (startIndex+1) to find the index of the highest number
         {
-            if (letterCounts[index] > letterCounts[highestIndex])
+            if (letterCounts[index] > letterCounts[highestIndex]) // this selection remembers the index of the highest number
                 highestIndex = index;
         }
+        // this code will swap the highest element with the element in the position in which it should go
         tempi = letterCounts[startIndex];
         letterCounts[startIndex] = letterCounts[highestIndex];
         letterCounts[highestIndex] = tempi;
-        tempc = inputLetterFrequencies[startIndex];
+
+        tempc = inputLetterFrequencies[startIndex]; // the letters of inputLetterFrequencies are also swapped so that the program knows what frequency number corresponds to which letter
         inputLetterFrequencies[startIndex] = inputLetterFrequencies[highestIndex];
         inputLetterFrequencies[highestIndex] = tempc;
     }
          
     printf("Below is the calculated key for this task\n");
-    for (int index = 0; index < 26; index++)
+    for (int index = 0; index < 26; index++) // this loop serves the purpose of printing the key substitutions to the screen
         printf("%c --> %c\n", standardLetterFrequencies[index], inputLetterFrequencies[index]);
     printf("This key was used to ENCODE the data to its encrypted state.\nThe key used by this program to decrypt the text has the arrow inverted\ni.e. a --> b becomes b --> a\n\n");
-    /*
-    for (int word = 0; word < maxWords; word++)
-    {
-        for (int letter = 0; letter < maxCharacters; letter++)
-        {
-            for (int letterFrequenciesIndex = 0; letterFrequenciesIndex < 26; letterFrequenciesIndex++)
-            {
-                if (inputText[word][letter] == standardLetterFrequencies[letterFrequenciesIndex])
-                {
-                    inputText[word][letter] = inputLetterFrequencies[letterFrequenciesIndex];
-                    break;
-                }
-            }
-        }
-    }
-    */
 
-    task3and4(inputLetterFrequencies, standardLetterFrequencies);
+    // the called function will actually modify the values of inputFile and store them in outputFile, as all this function does is determine the key
+    task3and4(inputLetterFrequencies, standardLetterFrequencies); // parameters are passed in the other way to 'undo' the encryption
     return 1;
 }
 
