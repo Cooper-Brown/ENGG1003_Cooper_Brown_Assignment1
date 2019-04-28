@@ -1,6 +1,3 @@
-# Cooper_Brown_Assignment1
-ENGG1003 Assignment 1
-
 /*
 NOTE: this comment block contains the same information as the start of my c file
 
