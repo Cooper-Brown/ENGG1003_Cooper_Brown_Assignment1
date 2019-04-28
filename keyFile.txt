@@ -1,2 +1,2 @@
-decode
-key: 
+encode
+key: dddddddddddddddddddddddddd
